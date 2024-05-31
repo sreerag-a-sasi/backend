@@ -34,10 +34,10 @@ const server = http.createServer((req, res)=>{
 
   if(parsed_url.pathname === '/') {
     res.writeHead(200, {'contet-type' : 'form/html'});
-    res.end(fs.readFilesync('../client/index.html'));
-  }else if(parsed_url.pathname === '/style.css') {
+    res.end(fs.readFilesync('../client/form.html'));
+  }else if(parsed_url.pathname === '/form.css') {
     res.writeHead(200, {'contet-type' : 'form/css'});
-    res.end(fs.readFilesync('../client/style.css'));
+    res.end(fs.readFilesync('../client/form.css'));
   }else{
     res.writeHead(404, {'contet-type' : 'text/plain'});
     res.end(fs.readFilesync("Page not found"));
