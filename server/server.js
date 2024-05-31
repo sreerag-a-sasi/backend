@@ -29,7 +29,7 @@ const server = http.createServer((req, res)=>{
   const req_url = req.url;
   console.log("req_url : ", req_url);
 
-  const parsed_url = url.pasre(req_url);
+  const parsed_url = url.parse(req_url);
   console.log("parsed_url : ", parsed_url);
 
   if(parsed_url.pathname === '/') {
