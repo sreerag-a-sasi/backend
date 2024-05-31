@@ -18,7 +18,7 @@ const http = require('http');
 const fs = require('fs');
 const url = require('url');
 const port = 3000;
-const hostname = 'localhost';
+const hostname = '127.0.0.1';
 
 const server = http.createServer((req, res)=>{
   console.log("Created Server");
@@ -33,10 +33,10 @@ const server = http.createServer((req, res)=>{
   console.log("parsed_url : ", parsed_url);
 
   if(parsed_url.pathname === '/') {
-    res.writeHead(200, {'contet-type' : 'form/html'});
+    res.writeHead(200, {'contet-type' : 'text/html'});
     res.end(fs.readFilesync('../client/form.html'));
   }else if(parsed_url.pathname === '/form.css') {
-    res.writeHead(200, {'contet-type' : 'form/css'});
+    res.writeHead(200, {'contet-type' : 'text/css'});
     res.end(fs.readFilesync('../client/form.css'));
   }else{
     res.writeHead(404, {'contet-type' : 'text/plain'});
