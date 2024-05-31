@@ -17,7 +17,7 @@
 const http = require('http');
 const fs = require('fs');
 const url = require('url');
-const port = 3000;
+const port = 5500;
 const hostname = '127.0.0.1';
 
 const server = http.createServer((req, res)=>{
