@@ -1,22 +1,21 @@
+
 const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
 function isValidEmail(email) {
-  return emailPattern.test(email);
+    return emailPattern.test(email);
 }
+
+const userDataForm = document.getElementById("userDataForm");
 userDataForm.addEventListener("submit", function (event) {
-  event.preventDefault(); // Prevent form submission
+    event.preventDefault(); // Prevent form submission
 
-  // const nameInput = document.getElementById("name");
-  const emailInput = document.getElementById("email");
+    const emailInput = document.getElementById("email");
+    const email = emailInput.value;
 
-  const email = emailInput.value;
-  console.log("email : ", isValidEmail(email));
-  if (isValidEmail(email)===true) {
-    console.log("your email has been verified!");
-    alert("your email has been verified!");
-    return;
-  }else{
-    console.log("your email is not verified!");
-    alert("your email is not verified!");
-    return;
-  }
+    const alertDiv = document.getElementById("alert");
+    if (isValidEmail(email)) {
+        alertDiv.textContent = "Your email has been verified!";
+    } else {
+        alertDiv.textContent = "Your email is not verified!";
+    }
 });
