@@ -14,8 +14,8 @@ userDataForm.addEventListener("submit", function (event) {
 
     const alertDiv = document.getElementById("alert");
     if (isValidEmail(email)) {
-        alertDiv.textContent = "Your email has been verified!";
+        // alertDiv.textContent = "Your email has been verified!";
     } else {
-        alertDiv.textContent = "Your email is not verified!";
+        alertDiv.textContent = "Please enter a valid email ID !";
     }
 });

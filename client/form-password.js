@@ -43,7 +43,7 @@ document.getElementById("userDataForm").addEventListener("submit", function (eve
 
     checkStrength(password);
     if (!password) {
-      alert("Please enter a valid password.");
+      // alert("Please enter a valid password.");
       return; // Stop further processing
     } else {
       if (
