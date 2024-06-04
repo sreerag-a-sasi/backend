@@ -55,6 +55,34 @@ const server = http.createServer((req, res) => {
     res.writeHead(200, { "content-type": "image/png" });
     res.end(fs.readFileSync("../client/google.png"));
   }
+  else if(pathname === '/submit' && req_methode === 'POST') {
+    let body;
+    let data;
+
+    req.on('data', (chunks) => {
+      console.log("chunks : ", chunks);
+      body = chunks.toString();
+      console.log("body : ", body);
+    });
+
+    req.on('end',()=>{
+      data = queryString.parse(body);
+      console.log("data : ",data);
+
+      let form_data = {
+        fname : data.first_name,
+        lname : data.last_name,
+        email : data.email,
+        password : data.password,
+      };
+
+      console.log("formData : ", form_data);
+
+      //Do something with the data, eg : save to a database
+      res.writeHead(200, {'content-type' : 'text/plain'});
+      res.end("Form submitted successfully");
+    });
+  }
   else {
     res.writeHead(404, { "content-type": "text/html" });
     res.end(fs.readFileSync("../client/404.html"));
