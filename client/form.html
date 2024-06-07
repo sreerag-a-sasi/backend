@@ -13,15 +13,15 @@
 </head>
 <body>
     <div class="form">
-        <form action="" id="userDataForm">
+        <form action="/submit" method="POST" id="userDataForm">
             <div class="bingo"><img src="./eagle2.jpg" alt=""></div>
-            <div><input type="text" placeholder="Enter Your Name :"></div>
-            <div><input type="text" placeholder="Enter Your UserName :"></div>
-            <div><input type="email" id="email" required placeholder="Enter Your email :" ></div> 
+            <div><input type="text" placeholder="Enter Your Name :" name="name"></div>
+            <div><input type="text" placeholder="Enter Your UserName :" name="username"></div>
+            <div><input type="email" id="email" name="email" required placeholder="Enter Your email :" ></div> 
             <div id="alert" ></div>
-            <div><input type="password" placeholder="Enter Your Password : min-8,max-15" id="password"  ></div>
+            <div><input type="password" name="password" placeholder="Enter Your Password : min-8,max-15" id="password"  ></div>
             <div id="strength" class="pass1"></div>
-            <div><input type="password" placeholder="Confirm Password :" id="password1" ></div>
+            <div><input type="password" name="password1" placeholder="Confirm Password :" id="password1" ></div>
             <div id="verification" class="pass1"></div>
             <div><button type="submit" id="btn">Submit</button></div>
 

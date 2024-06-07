@@ -35,7 +35,7 @@ const strength = {
   alertDiv.textContent = (strength[count]);
 }
 document.getElementById("userDataForm").addEventListener("submit", function (event) {
-    event.preventDefault(); // Prevent form submission
+    // event.preventDefault(); // Prevent form submission
     const password = document.getElementById("password").value;
     const password1 = document.getElementById("password1").value;
 

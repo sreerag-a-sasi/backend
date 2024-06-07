@@ -18,18 +18,21 @@ const fs = require("fs");
 const url = require("url");
 const port = 3500;
 const hostname = "localhost";
+const queryString = require("querystring");
+
 
 const server = http.createServer((req, res) => {
   console.log("Created Server");
 
-  // res.writeHead(200, {'contet-type' : 'text/plain'});
-  // res.end("server Created succsessfully");
 
   const req_url = req.url;
   console.log("req_url : ", req_url);
 
   const parsed_url = url.parse(req_url);
   console.log("parsed_url : ", parsed_url);
+
+  const req_method = req.method;
+  console.log("req_method : ",req_method);
 
   if (parsed_url.pathname === "/") {
     res.writeHead(200, { "content-type": "text/html" });
@@ -55,34 +58,39 @@ const server = http.createServer((req, res) => {
     res.writeHead(200, { "content-type": "image/png" });
     res.end(fs.readFileSync("../client/google.png"));
   }
-  // else if(pathname === '/submit' && req_methode === 'POST') {
-  //   let body;
-  //   let data;
+  else if (parsed_url.pathname === '/submit' && req_method === 'POST') {
+    let body = "";
+    let data;
 
-  //   req.on('data', (chunks) => {
-  //     console.log("chunks : ", chunks);
-  //     body = chunks.toString();
-  //     console.log("body : ", body);
-  //   });
+    // req.on('data', (chunks) => {
+    //     body += chunks.toString(); // Accumulate the data
+    // });
+    req.on('data', (chunks) => {
+      console.log("chunks : ", chunks);
+      body = chunks.toString();
+      console.log("body : ", body);
+    });
 
-  //   req.on('end',()=>{
-  //     data = queryString.parse(body);
-  //     console.log("data : ",data);
+    req.on('end', () => {
+        data = queryString.parse(body); // Parse the query string data
+        console.log("data : ", data);
 
-  //     let form_data = {
-  //       fname : data.first_name,
-  //       lname : data.last_name,
-  //       email : data.email,
-  //       password : data.password,
-  //     };
+        let form_data = {
+          //to see the data add name attribute in the html form
+            name: data.name,
+            username: data.username,
+            email:data.email,
+            password:data.password,
+            password1:data.password1,
+        };
 
-  //     console.log("formData : ", form_data);
+        console.log("formData : ", form_data);
 
-  //     //Do something with the data, eg : save to a database
-  //     res.writeHead(200, {'content-type' : 'text/plain'});
-  //     res.end("Form submitted successfully");
-  //   });
-  // }
+        // Do something with the data (e.g., save to a database)
+        res.writeHead(200, { 'content-type': 'text/plain' });
+        res.end("Form submitted successfully");
+    });
+}
   else {
     res.writeHead(404, { "content-type": "text/html" });
     res.end(fs.readFileSync("../client/404.html"));
