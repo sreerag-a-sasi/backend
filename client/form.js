@@ -7,7 +7,7 @@ function isValidEmail(email) {
 
 const userDataForm = document.getElementById("userDataForm");
 userDataForm.addEventListener("submit", function (event) {
-    // event.preventDefault(); // Prevent form submission
+    //event.preventDefault(); // Prevent form submission
 
     const emailInput = document.getElementById("email");
     const email = emailInput.value;
