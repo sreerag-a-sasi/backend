@@ -19,11 +19,17 @@ const url = require("url");
 const port = 3500;
 const hostname = "localhost";
 const queryString = require("querystring");
+//const { Client } = require("undici-types");
+const {MongoClient, Collection} = require('mongodb');
+
+const client = new MongoClient('mongodb://127.0.0.1:27017');
 
 
 const server = http.createServer((req, res) => {
   console.log("Created Server");
 
+  const db = client.db("hrm");
+  const Collection = db.collection('users');
 
   const req_url = req.url;
   console.log("req_url : ", req_url);
@@ -86,16 +92,44 @@ const server = http.createServer((req, res) => {
 
         console.log("formData : ", form_data);
 
+
+        //save to database
+        Collection.insertOne(form_data)
+          .then((data) => {
+            console.log("data : ", data);
+            res.writeHead(200, { 'Content-Type' : 'text/plain'});
+            res.end("Form submitted successfully");
+            return;
+          })
+          .catch((error) => {
+            console.log("error : ",error.message?error.message:error);
+            res.writeHead(200, { 'Content-Type' : 'text/plain'});
+            res.end("Something went wrong");
+            return;
+          })
         // Do something with the data (e.g., save to a database)
         res.writeHead(200, { 'content-type': 'text/plain' });
         res.end("Form submitted successfully");
+        return;
     });
 }
   else {
     res.writeHead(404, { "content-type": "text/html" });
     res.end(fs.readFileSync("../client/404.html"));
+    return;
   }
 });
+
+async function connect() {
+  try{
+    await Client.connect();
+    console.log("DataBase connection established...");
+  } catch (error) {
+    console.log("error : ",error.message?error.message:error);
+  }
+}
+
+connect();
 
 server.listen(port, hostname, () => {
   console.log(`server running at http://${hostname}:${port}`);
