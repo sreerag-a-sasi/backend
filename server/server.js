@@ -43,26 +43,32 @@ const server = http.createServer((req, res) => {
   if (parsed_url.pathname === "/") {
     res.writeHead(200, { "content-type": "text/html" });
     res.end(fs.readFileSync("../client/form.html"));
+    return;
   }
    else if (parsed_url.pathname === "/form.css") {
     res.writeHead(200, { "content-type": "text/css" });
     res.end(fs.readFileSync("../client/form.css"));
+    return;
   } 
   else if (parsed_url.pathname === "/form.js") {
     res.writeHead(200, { "content-type": "text/js" });
     res.end(fs.readFileSync("../client/form.js"));
+    return;
   } 
   else if (parsed_url.pathname === "/form-password.js") {
     res.writeHead(200, { "content-type": "text/js" });
     res.end(fs.readFileSync("../client/form-password.js"));
+    return;
   }
   else if (parsed_url.pathname === "/eagle2.jpg") {
     res.writeHead(200, { "content-type": "image/jpeg" });
     res.end(fs.readFileSync("../client/eagle2.jpg"));
+    return;
   }
   else if (parsed_url.pathname === "/google.png") {
     res.writeHead(200, { "content-type": "image/png" });
     res.end(fs.readFileSync("../client/google.png"));
+    return;
   }
   else if (parsed_url.pathname === '/submit' && req_method === 'POST') {
     let body = "";
@@ -75,6 +81,7 @@ const server = http.createServer((req, res) => {
       console.log("chunks : ", chunks);
       body = chunks.toString();
       console.log("body : ", body);
+      return;
     });
 
     req.on('end', () => {
@@ -93,6 +100,17 @@ const server = http.createServer((req, res) => {
         console.log("formData : ", form_data);
 
 
+        const nameRegx = /^([a-zA-Z ]){2,30}$/;
+        const isNameValid = nameRegx.test(form_data.name);
+
+        console.log("isnamevalid : ",isNameValid);
+
+        if(!isNameValid) {
+          res.writeHead(400, { 'Content-Type' : 'text/plain'});
+          res.end("your name is invalid");
+          return;
+        }
+
         //save to database
         Collection.insertOne(form_data)
           .then((data) => {
@@ -107,10 +125,6 @@ const server = http.createServer((req, res) => {
             res.end("Something went wrong");
             return;
           })
-        // Do something with the data (e.g., save to a database)
-        res.writeHead(200, { 'content-type': 'text/plain' });
-        res.end("Form submitted successfully");
-        return;
     });
 }
   else {
@@ -122,7 +136,7 @@ const server = http.createServer((req, res) => {
 
 async function connect() {
   try{
-    await Client.connect();
+    await client.connect();
     console.log("DataBase connection established...");
   } catch (error) {
     console.log("error : ",error.message?error.message:error);
