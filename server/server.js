@@ -25,7 +25,7 @@ const {MongoClient, Collection} = require('mongodb');
 const client = new MongoClient('mongodb://127.0.0.1:27017');
 
 
-const server = http.createServer((req, res) => {
+const server = http.createServer(async (req, res) => {
   console.log("Created Server");
 
   const db = client.db("hrm");
@@ -70,6 +70,26 @@ const server = http.createServer((req, res) => {
     res.end(fs.readFileSync("../client/google.png"));
     return;
   }
+  else if (parsed_url.pathname === "/img/river-8286407.png") {
+    res.writeHead(200, { "content-type": "image/png" });
+    res.end(fs.readFileSync("../client/img/river-8286407.png"));
+    return;
+  }
+
+
+
+  else if (parsed_url.pathname === "/getUsers.html") {
+    res.writeHead(200, { "content-type": "text/html" });
+    res.end(fs.readFileSync("../client/getUsers.html"));
+    return;
+  }
+  else if (parsed_url.pathname === "/postUsers.html") {
+    res.writeHead(200, { "content-type": "text/html" });
+    res.end(fs.readFileSync("../client/postUsers.html"));
+    return;
+  }
+
+
   else if (parsed_url.pathname === '/submit' && req_method === 'POST') {
     let body = "";
     let data;
@@ -84,7 +104,7 @@ const server = http.createServer((req, res) => {
       return;
     });
 
-    req.on('end', () => {
+    req.on('end',() => {
         data = queryString.parse(body); // Parse the query string data
         console.log("data : ", data);
 
@@ -126,6 +146,16 @@ const server = http.createServer((req, res) => {
             return;
           })
     });
+}else if (parsed_url.pathname === '/getData' && req_method === 'GET') {
+
+  const data = await collection.find().toArray();
+  console.log("data :", data);
+  const json_data = JSON.stringify(data);
+  console.log("json_data : ", json_data);
+
+  res.writeHead(404,{'Content-Type' : 'text/json'});
+  res.end(json_data);
+  return;
 }
   else {
     res.writeHead(404, { "content-type": "text/html" });
