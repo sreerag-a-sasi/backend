@@ -4,12 +4,11 @@ const strength = {
   3: "Password is Meduim",
   4: "Password is Strong",
 };
- function checkStrength(pass) {
+function checkStrength(pass) {
   if (pass.length > 15) {
     const alert = document.getElementsByClassName("pass1");
     alert.textContent = " Password is too lengthy";
-  }
-  else if (pass.length < 8){
+  } else if (pass.length < 8) {
     const warn = document.getElementsByClassName("pass1");
     warn.textContent = " Password is too short";
   }
@@ -30,16 +29,16 @@ const strength = {
   if (regex4.test(pass)) count++;
 
   console.log(strength[count]);
-  
+
   const alertDiv = document.getElementById("strength");
-  alertDiv.textContent = (strength[count]);
+  alertDiv.textContent = strength[count];
 }
-document.getElementById("userDataForm").addEventListener("submit", function (event) {
+document
+  .getElementById("userDataForm")
+  .addEventListener("submit", function (event) {
     //event.preventDefault(); // Prevent form submission
     const password = document.getElementById("password").value;
     const password1 = document.getElementById("password1").value;
-
-
 
     checkStrength(password);
     if (!password) {
@@ -47,15 +46,17 @@ document.getElementById("userDataForm").addEventListener("submit", function (eve
       return; // Stop further processing
     } else {
       if (
-        (document.getElementById("password").value!=0) === (document.getElementById("password1").value!=0)
+        (document.getElementById("password").value != 0) ===
+        (document.getElementById("password1").value != 0)
       ) {
         console.log("your password has been confirmed");
         const alertDiv = document.getElementById("verification");
-        alertDiv.textContent = "your password has been confirmed" ;
+        alertDiv.textContent = "your password has been confirmed";
       } else {
         console.log("your password doesnt match, try again");
         const alertDiv = document.getElementById("verification");
-        alertDiv.textContent = textContent = "your password doesnt match, try again";
+        alertDiv.textContent = textContent =
+          "your password doesnt match, try again";
       }
     }
   });
