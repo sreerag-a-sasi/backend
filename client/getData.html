@@ -5,15 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Get Users</title>
   </head>
-  <body>
+  <body onload="getData()">
     <h1>This Is Get Users Page</h1>
     <table>
       <thead>
-        <th>name</th>
-        <th>username</th>
-        <th>email</th>
-        <th>password</th>
-        <th>password1</th>
+        <tr>
+          <th>name</th>
+          <th>username</th>
+          <th>email</th>
+          <th>password</th>
+          <th>password1</th>
+        </tr>
       </thead>
       <tbody id="dataContainer"></tbody>
     </table>

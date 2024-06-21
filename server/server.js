@@ -75,13 +75,13 @@ const server = http.createServer(async (req, res) => {
     res.writeHead(200, { "content-type": "image/png" });
     res.end(fs.readFileSync("../client/img/river-8286407.png"));
     return;
-  } else if (parsed_url.pathname === "/getUsers.html") {
+  } else if (parsed_url.pathname === "/getData.html") {
     res.writeHead(200, { "content-type": "text/html" });
-    res.end(fs.readFileSync("../client/getUsers.html"));
+    res.end(fs.readFileSync("../client/getData.html"));
     return;
-  } else if (parsed_url.pathname === "/postUsers.html") {
+  } else if (parsed_url.pathname === "/postData.html") {
     res.writeHead(200, { "content-type": "text/html" });
-    res.end(fs.readFileSync("../client/postUsers.html"));
+    res.end(fs.readFileSync("../client/postData.html"));
     return;
   } else if (parsed_url.pathname === "/submit" && req_method === "POST") {
     let body = "";
@@ -90,14 +90,14 @@ const server = http.createServer(async (req, res) => {
     // req.on('data', (chunks) => {
     //     body += chunks.toString(); // Accumulate the data
     // });
-    req.on("data", (chunks) => {
+    req.on('data', (chunks) => {
       console.log("chunks : ", chunks);
       body = chunks.toString();
       console.log("body : ", body);
       return;
     });
 
-    req.on("end", () => {
+    req.on('end',async () => {
       data = queryString.parse(body); // Parse the query string data
       console.log("data : ", data);
 
@@ -110,18 +110,20 @@ const server = http.createServer(async (req, res) => {
         password1: data.password1,
       };
 
-      // console.log("formData : ", form_data);
+      console.log("formData : ", form_data);
 
-      // const nameRegx = /^([a-zA-Z ]){2,30}$/;
-      // const isNameValid = nameRegx.test(form_data.name);
+      const nameRegx = /^([a-zA-Z ]){2,30}$/;
+      const isNameValid = nameRegx.test(form_data.name);
 
-      // console.log("isnamevalid : ", isNameValid);
+      console.log("isnamevalid : ", isNameValid);
 
-      // if (!isNameValid) {
-      //   res.writeHead(400, { "Content-Type": "text/plain" });
-      //   res.end("your name is invalid");
-      //   return;
-      // }
+      if (!isNameValid) {
+        res.writeHead(400, { "Content-Type": "text/plain" });
+        res.end("your name is invalid");
+        return;
+      }
+/////////////////////////////////////////////////////////////////////////////////////////////
+
 
       //save to database
       Collection.insertOne(form_data)
@@ -138,13 +140,17 @@ const server = http.createServer(async (req, res) => {
           return;
         });
     });
-  } else if (parsed_url.pathname === "/getData" && req_method === "GET") {
+
+  //////////////////////////////////////////////////////////////////////////////////////////////
+
+
+  } else if (parsed_url.pathname === '/getData' && req_method === 'GET') {
     const data = await Collection.find().toArray();
     console.log("data :", data);
     const json_data = JSON.stringify(data);
     console.log("json_data : ", json_data);
 
-    res.writeHead(404, { "Content-Type": "text/json" });
+    res.writeHead(200, { "Content-Type": "text/json" });
     res.end(json_data);
     return;
   } else {
@@ -153,6 +159,9 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 });
+
+///////////////////////////////////////////////////////////////////////////////////////////////
+
 
 async function connect() {
   try {
