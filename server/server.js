@@ -153,7 +153,50 @@ const server = http.createServer(async (req, res) => {
     res.writeHead(200, { "Content-Type": "text/json" });
     res.end(json_data);
     return;
-  } else {
+  }
+    ///////////////////////////////////////////////////////////////////////////////////////////
+
+    else if (pathname === '/editData' && req_method === 'PUT') {
+      console.log("edit request recieved...");
+      let body;
+
+      req.on('data', (chunks) => {
+        console.log("chunks : ",chunks);
+        body = chunks.toString();
+        console.log("body : ", body);
+      });
+
+      req.on('end' , async ()=> {
+        let parsed_body = JSON.parse(body);
+        console.log("parsed_body : ",parsed_body);
+
+        let update_datas = {
+          name : parsed_body.name,
+          username : parsed_body.username,
+          email : parsed_body.email,
+          password : parsed_body.password,
+          password1 : parsed_body.password1,
+        }
+
+        let id = parsed_body.id;
+        console.log("id : ", id);
+        console.log("typeOf(id) : ", typeof(id));
+
+        let _id = new ObjectId(id);
+        console.log("_id : ", _id);
+        console.log("typeOf(_id) : ", typeof(_id));
+
+        let updateUser = await collection.findOneAndUpdate({_id},{$set : update_datas});
+        console.log("updateUser : ", updateUser);
+
+        if (updateUser) {
+          res.writeHead(200, {"content-Type" : 'text/plain'});
+          res.end("failed");
+          return;
+        }
+      })
+    }
+   else {
     res.writeHead(404, { "content-type": "text/html" });
     res.end(fs.readFileSync("../client/404.html"));
     return;
