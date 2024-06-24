@@ -25,7 +25,7 @@ async function getData() {
               <td><input type="password" id='password-${parsed_data[i]._id}' value=${password} disabled=true></td>
               <td><input type="password" id='password1-${parsed_data[i]._id}' value=${password1} disabled=true></td>
               <td><button onclick= "handleEdit('${parsed_data[i]._id}')">Edit</button></td>
-              <td><button>Save</button></td>
+              <td><button onclick= "handleSave('${parsed_data[i]._id}')">Save</button></td>
     </tr>
         `;
   }
@@ -34,7 +34,7 @@ async function getData() {
 }
 
 function handleEdit(id) {
-  alert(`Edit button of id : ${id}`);
+  // alert(`Edit button of id : ${id}`);
   console.log("id : ",id);
 
   let name = document.getElementById(`name-${id}`);
@@ -52,6 +52,7 @@ function handleEdit(id) {
 
 
 async function handleSave(id) {
+  // alert(`save button of id : ${id}`)
   console.log("id : ",id);
 
   let name = document.getElementById(`name-${id}`).value;
@@ -81,7 +82,7 @@ async function handleSave(id) {
   let json_datas  = JSON.stringify(datas);
   console.log("json_datas : ", json_datas);
 
-  let response = await fetch('/editData', {
+  let response = await getData('/editData', {
     method : "PUT" ,
     headers : {
       'content-Type' : 'application/json'

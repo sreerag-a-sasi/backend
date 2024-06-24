@@ -20,7 +20,7 @@ const port = 3500;
 const hostname = "localhost";
 const queryString = require("querystring");
 //const { Client } = require("undici-types");
-const { MongoClient, collection } = require("mongodb");
+const { MongoClient, Collection , ObjectId } = require("mongodb");
 
 const client = new MongoClient("mongodb://127.0.0.1:27017");
 
@@ -85,7 +85,7 @@ const server = http.createServer(async (req, res) => {
     return;
   } else if (parsed_url.pathname === "/submit" && req_method === "POST") {
     let body = "";
-    let data;
+    let data; 
 
     // req.on('data', (chunks) => {
     //     body += chunks.toString(); // Accumulate the data
@@ -122,8 +122,6 @@ const server = http.createServer(async (req, res) => {
         res.end("your name is invalid");
         return;
       }
-/////////////////////////////////////////////////////////////////////////////////////////////
-
 
       //save to database
       Collection.insertOne(form_data)
@@ -141,9 +139,7 @@ const server = http.createServer(async (req, res) => {
         });
     });
 
-  //////////////////////////////////////////////////////////////////////////////////////////////
-
-
+  
   } else if (parsed_url.pathname === '/getData' && req_method === 'GET') {
     const data = await Collection.find().toArray();
     console.log("data :", data);
@@ -153,22 +149,21 @@ const server = http.createServer(async (req, res) => {
     res.writeHead(200, { "Content-Type": "text/json" });
     res.end(json_data);
     return;
-  }
-    ///////////////////////////////////////////////////////////////////////////////////////////
+  }else if(pathname === '/editData' && req_method === 'PUT'){
+  res.end(json_data);
+  return;
+  
+  let body;
 
-    else if (pathname === '/editData' && req_method === 'PUT') {
-      console.log("edit request recieved...");
-      let body;
+  req.on('data',(chunks) =>{
+      console.log("chunks: ",chunks);
+      body  = chunks.toString();
+      console.log("body : ",body);
 
-      req.on('data', (chunks) => {
-        console.log("chunks : ",chunks);
-        body = chunks.toString();
-        console.log("body : ", body);
-      });
-
-      req.on('end' , async ()=> {
-        let parsed_body = JSON.parse(body);
-        console.log("parsed_body : ",parsed_body);
+  });
+  req.on('end', async () => {
+      let parsed_body = JSON.parse(body);
+      console.log ("parsed_body : ",parsed_body);
 
         let update_datas = {
           name : parsed_body.name,
@@ -177,35 +172,34 @@ const server = http.createServer(async (req, res) => {
           password : parsed_body.password,
           password1 : parsed_body.password1,
         }
+      let id = parsed_body.id;
+      console.log("id :",id)
+      console.log("type Of(id) :", typeOf(id));
 
-        let id = parsed_body.id;
-        console.log("id : ", id);
-        console.log("typeOf(id) : ", typeof(id));
+      let _id = new ObjectId(id);
+      console.log("_id :",_id);
+      console.log("typeOf(_id) :", typeOf(_id));
 
-        let _id = new ObjectId(id);
-        console.log("_id : ", _id);
-        console.log("typeOf(_id) : ", typeof(_id));
-
-        let updateUser = await collection.findOneAndUpdate({_id},{$set : update_datas});
+        let updateUser = await Collection.findOneAndUpdate({_id}, {$set : update_datas} );
         console.log("updateUser : ", updateUser);
 
-        if (updateUser) {
-          res.writeHead(200, {"content-Type" : 'text/plain'});
-          res.end("failed");
+      if(updateUser){
+          res.writeHead(200,{"content-Type" : 'text/plain'});
+          res.end("success");
           return;
-        }
-      })
-    }
-   else {
-    res.writeHead(404, { "content-type": "text/html" });
-    res.end(fs.readFileSync("../client/404.html"));
-    return;
-  }
+      }else {
+        res.writeHead(400,{"content-Type" : 'text/plain'});
+        res.end("failed");
+        return;
+      }
+  });
+}
+else {
+  res.writeHead(404,{'Content-Type' : 'text/plain'});
+  res.end("Page not found");
+}
+
 });
-
-///////////////////////////////////////////////////////////////////////////////////////////////
-
-
 async function connect() {
   try {
     await client.connect();
@@ -220,3 +214,4 @@ connect();
 server.listen(port, hostname, () => {
   console.log(`server running at http://${hostname}:${port}`);
 });
+
