@@ -20,7 +20,7 @@ const port = 3500;
 const hostname = "localhost";
 const queryString = require("querystring");
 //const { Client } = require("undici-types");
-const { MongoClient, Collection , ObjectId } = require("mongodb");
+const { MongoClient, Collection, ObjectId } = require("mongodb");
 
 const client = new MongoClient("mongodb://127.0.0.1:27017");
 
@@ -85,19 +85,19 @@ const server = http.createServer(async (req, res) => {
     return;
   } else if (parsed_url.pathname === "/submit" && req_method === "POST") {
     let body = "";
-    let data; 
+    let data;
 
     // req.on('data', (chunks) => {
     //     body += chunks.toString(); // Accumulate the data
     // });
-    req.on('data', (chunks) => {
+    req.on("data", (chunks) => {
       console.log("chunks : ", chunks);
       body = chunks.toString();
       console.log("body : ", body);
       return;
     });
 
-    req.on('end',async () => {
+    req.on("end", async () => {
       data = queryString.parse(body); // Parse the query string data
       console.log("data : ", data);
 
@@ -112,7 +112,7 @@ const server = http.createServer(async (req, res) => {
 
       console.log("formData : ", form_data);
 
-      const nameRegx = /^([a-zA-Z ]){2,30}$/;
+      const nameRegx = /^([a-zA-Z ]){3,30}$/;
       const isNameValid = nameRegx.test(form_data.name);
 
       console.log("isnamevalid : ", isNameValid);
@@ -122,6 +122,38 @@ const server = http.createServer(async (req, res) => {
         res.end("your name is invalid");
         return;
       }
+
+      const usernameRegx = /^([a-zA-Z 0-9]){3,30}$/;
+      const userNameValid = usernameRegx.test(form_data.username);
+
+      console.log("isnamevalid : ", userNameValid);
+
+      if (!userNameValid) {
+        res.writeHead(400, { "Content-Type": "text/plain" });
+        res.end("your username is invalid");
+        return;
+      }
+           
+      if (!form_data.password) {
+        res.writeHead(400, { "Content-Type": "text/plain" });
+        res.end("your password is invalid");
+        return; // Stop further processing
+      };
+
+      const passregex =/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@.#$!%*?&])[A-Za-z\d@.#$!^%*?&]{8,15}$/;
+      const passwordvalid = passregex.test(form_data.password);
+      const password1valid = passregex.test(form_data.password1);
+      const pass = form_data.password;
+      const pass1 = form_data.password1;
+      // if (pass === pass1){
+      // res.writeHead(200,{ "content-Type" : "text/plain"});
+      // res.end("your password is ok");
+      // return;
+      // }else{
+      //   res.writeHead(400,{ "content-Type" : "text/plain"});
+      //   res.end("your password is not matching");
+      // }
+
 
       //save to database
       Collection.insertOne(form_data)
@@ -138,9 +170,7 @@ const server = http.createServer(async (req, res) => {
           return;
         });
     });
-
-  
-  } else if (parsed_url.pathname === '/getData' && req_method === 'GET') {
+  } else if (parsed_url.pathname === "/getData" && req_method === "GET") {
     const data = await Collection.find().toArray();
     console.log("data :", data);
     const json_data = JSON.stringify(data);
@@ -149,56 +179,82 @@ const server = http.createServer(async (req, res) => {
     res.writeHead(200, { "Content-Type": "text/json" });
     res.end(json_data);
     return;
-  }else if(pathname === '/editData' && req_method === 'PUT'){
-  res.end(json_data);
-  return;
-  
-  let body;
+  } else if (parsed_url.pathname === "/editData" && req_method === "PUT") {
+    let body;
 
-  req.on('data',(chunks) =>{
-      console.log("chunks: ",chunks);
-      body  = chunks.toString();
-      console.log("body : ",body);
-
-  });
-  req.on('end', async () => {
+    req.on("data", (chunks) => {
+      console.log("chunks: ", chunks);
+      body = chunks.toString();
+      console.log("body : ", body);
+    });
+    req.on("end", async () => {
       let parsed_body = JSON.parse(body);
-      console.log ("parsed_body : ",parsed_body);
+      console.log("parsed_body : ", parsed_body);
 
-        let update_datas = {
-          name : parsed_body.name,
-          username : parsed_body.username,
-          email : parsed_body.email,
-          password : parsed_body.password,
-          password1 : parsed_body.password1,
-        }
+      let update_datas = {
+        name: parsed_body.name,
+        username: parsed_body.username,
+        email: parsed_body.email,
+        password: parsed_body.password,
+        password1: parsed_body.password1,
+      };
       let id = parsed_body.id;
-      console.log("id :",id)
-      console.log("type Of(id) :", typeOf(id));
+      console.log("id :", id);
+      console.log("type Of(id) :", typeof id);
 
       let _id = new ObjectId(id);
-      console.log("_id :",_id);
-      console.log("typeOf(_id) :", typeOf(_id));
+      console.log("_id :", _id);
+      console.log("typeOf(_id) :", typeof _id);
 
-        let updateUser = await Collection.findOneAndUpdate({_id}, {$set : update_datas} );
-        console.log("updateUser : ", updateUser);
+      let updateUser = await Collection.findOneAndUpdate(
+        { _id },
+        { $set: update_datas }
+      );
+      console.log("updateUser : ", updateUser);
 
-      if(updateUser){
-          res.writeHead(200,{"content-Type" : 'text/plain'});
-          res.end("success");
-          return;
-      }else {
-        res.writeHead(400,{"content-Type" : 'text/plain'});
+      if (updateUser) {
+        res.writeHead(200, { "content-Type": "text/plain" });
+        res.end("success");
+        return;
+      } else {
+        res.writeHead(400, { "content-Type": "text/plain" });
         res.end("failed");
         return;
       }
-  });
-}
-else {
-  res.writeHead(404,{'Content-Type' : 'text/plain'});
-  res.end("Page not found");
-}
+    });
+  } else if (parsed_url.pathname === "/deleteData" && req_method === "DELETE") {
+    let body;
 
+    req.on("data", (chunks) => {
+      console.log("chunks: ", chunks);
+      body = chunks.toString();
+      console.log("body : ", body);
+    });
+
+    req.on("end", async () => {
+      let parsed_body = JSON.parse(body);
+      let id = parsed_body.id;
+      console.log("id :", id);
+
+      let _id = new ObjectId(id);
+      console.log("_id :", _id);
+
+      // Correct method: findOneAndDelete
+      let deletedUser = await Collection.findOneAndDelete({ _id });
+      console.log("deletedUser : ", deletedUser);
+
+      if (deletedUser) {
+        res.writeHead(200, { "content-Type": "text/plain" });
+        res.end("success");
+      } else {
+        res.writeHead(400, { "content-Type": "text/plain" });
+        res.end("failed");
+      }
+    });
+  } else {
+    res.writeHead(404, { "Content-Type": "text/plain" });
+    res.end("Page not found");
+  }
 });
 async function connect() {
   try {
@@ -214,4 +270,3 @@ connect();
 server.listen(port, hostname, () => {
   console.log(`server running at http://${hostname}:${port}`);
 });
-

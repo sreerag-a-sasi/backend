@@ -44,11 +44,9 @@ document
     if (!password) {
       // alert("Please enter a valid password.");
       return; // Stop further processing
-    } else {
-      if (
-        (document.getElementById("password").value != 0) ===
-        (document.getElementById("password1").value != 0)
-      ) {
+    }
+      if (password === password1 )
+     {
         console.log("your password has been confirmed");
         const alertDiv = document.getElementById("verification");
         alertDiv.textContent = "your password has been confirmed";
@@ -58,5 +56,4 @@ document
         alertDiv.textContent = textContent =
           "your password doesnt match, try again";
       }
-    }
   });

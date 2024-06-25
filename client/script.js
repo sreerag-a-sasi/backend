@@ -26,6 +26,7 @@ async function getData() {
               <td><input type="password" id='password1-${parsed_data[i]._id}' value=${password1} disabled=true></td>
               <td><button onclick= "handleEdit('${parsed_data[i]._id}')">Edit</button></td>
               <td><button onclick= "handleSave('${parsed_data[i]._id}')">Save</button></td>
+              <td><button onclick= "remove('${parsed_data[i]._id}')">remove user</button></td>
     </tr>
         `;
   }
@@ -36,6 +37,7 @@ async function getData() {
 function handleEdit(id) {
   // alert(`Edit button of id : ${id}`);
   console.log("id : ",id);
+
 
   let name = document.getElementById(`name-${id}`);
   let username = document.getElementById(`username-${id}`);
@@ -82,7 +84,7 @@ async function handleSave(id) {
   let json_datas  = JSON.stringify(datas);
   console.log("json_datas : ", json_datas);
 
-  let response = await getData('/editData', {
+  let response = await fetch('/editData', {
     method : "PUT" ,
     headers : {
       'content-Type' : 'application/json'
@@ -99,5 +101,51 @@ async function handleSave(id) {
     return;
   }else {
     alert("user updation failed");
+  }
+}
+
+
+
+
+
+async function remove(id) {
+  // alert(`save button of id : ${id}`)
+  console.log("id : ",id);
+
+  let name = document.getElementById(`name-${id}`).value;
+  let username = document.getElementById(`username-${id}`).value;
+  let email = document.getElementById(`email-${id}`).value;
+  let password = document.getElementById(`password-${id}`).value;
+  let password1 = document.getElementById(`password1-${id}`).value;
+  
+  let datas = {
+    id,
+    name,
+    username,
+    email,
+    password,
+    password1,
+  }
+
+  let json_datas  = JSON.stringify(datas);
+  console.log("json_datas : ", json_datas);
+
+  let response = await fetch('/deleteData', {
+    method : "DELETE" ,
+    headers : {
+      'content-Type' : 'application/json'
+    },
+    body : json_datas,
+  });
+  console.log("response : ", response);
+
+  let parsed_response = await response.text();
+  console.log("parsed_response : ",parsed_response);
+
+  if(parsed_response === "success") {
+    alert("user removed successfully");
+    return;
+  }else {
+    alert("user not removed");
   }
 }
