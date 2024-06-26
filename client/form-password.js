@@ -8,9 +8,11 @@ function checkStrength(pass) {
   if (pass.length > 15) {
     const alert = document.getElementsByClassName("pass1");
     alert.textContent = " Password is too lengthy";
+    return;
   } else if (pass.length < 8) {
     const warn = document.getElementsByClassName("pass1");
     warn.textContent = " Password is too short";
+    return;
   }
 
   let regex =

@@ -133,43 +133,45 @@ const server = http.createServer(async (req, res) => {
         res.end("your username is invalid");
         return;
       }
-           
-      if (!form_data.password) {
-        res.writeHead(400, { "Content-Type": "text/plain" });
-        res.end("your password is invalid");
-        return; // Stop further processing
-      };
 
-      const passregex =/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@.#$!%*?&])[A-Za-z\d@.#$!^%*?&]{8,15}$/;
+      const passregex =/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{3,15}$/;
       const passwordvalid = passregex.test(form_data.password);
       const password1valid = passregex.test(form_data.password1);
+      if (!passwordvalid) {
+        res.writeHead(400, { "Content-Type": "text/plain" });
+        res.end("your password is invalid");
+        return;
+      }
+      if (!password1valid) {
+        res.writeHead(400, { "Content-Type": "text/plain" });
+        res.end("your password is invalid");
+        return;
+      }
       const pass = form_data.password;
       const pass1 = form_data.password1;
-      // if (pass === pass1){
-      // res.writeHead(200,{ "content-Type" : "text/plain"});
-      // res.end("your password is ok");
-      // return;
-      // }else{
-      //   res.writeHead(400,{ "content-Type" : "text/plain"});
-      //   res.end("your password is not matching");
-      // }
+      if (pass !== pass1){
+        res.writeHead(400,{ "content-Type" : "text/plain"});
+        res.end("your password is not matching");
+        return;
+      }
 
 
       //save to database
       Collection.insertOne(form_data)
-        .then((data) => {
-          console.log("data : ", data);
-          res.writeHead(200, { "Content-Type": "text/plain" });
-          res.end("Form submitted successfully");
-          return;
-        })
-        .catch((error) => {
-          console.log("error : ", error.message ? error.message : error);
-          res.writeHead(200, { "Content-Type": "text/plain" });
-          res.end("Something went wrong");
-          return;
-        });
-    });
+            .then((data) =>{
+                console.log("data :", data);
+                res.writeHead(200, {'Content-type':'text/plain'});
+                res.end("form submited successfully");
+                return;
+            })
+
+            .catch((error) =>{
+                console.log("error :",error.message?error.message:error);
+                res.writeHead(400,{'Content-type':'text/plain'});
+                res.end("something went wrong");
+                return;
+            });
+          });
   } else if (parsed_url.pathname === "/getData" && req_method === "GET") {
     const data = await Collection.find().toArray();
     console.log("data :", data);
